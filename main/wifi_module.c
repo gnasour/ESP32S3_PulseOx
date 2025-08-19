@@ -66,7 +66,6 @@ void wifi_init_sta(void)
 
   // Configure TCP/IP Stack
   ESP_ERROR_CHECK(esp_netif_init());
-
   ESP_ERROR_CHECK(esp_event_loop_create_default());
   esp_netif_create_default_wifi_sta();
 
@@ -104,8 +103,6 @@ void wifi_init_sta(void)
   ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
   ESP_ERROR_CHECK(esp_wifi_start());
 
-  ESP_LOGI(TAG_WIFI, "wifi_init_sta finished.");
-
   /* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
    * number of re-tries (WIFI_FAIL_BIT). The bits are set by event_handler() (see above) */
   EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
@@ -128,20 +125,24 @@ void wifi_init_sta(void)
   {
     ESP_LOGE(TAG_WIFI, "UNEXPECTED EVENT");
   }
+
+  ESP_LOGI(TAG_WIFI, "wifi_init_sta finished.");
+  
 }
 
 void wifi_init(void){
-    // Initialize NVS
+  
+  // Initialize NVS
   esp_err_t ret = nvs_flash_init();
-  if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
+  while (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
   {
     ESP_ERROR_CHECK(nvs_flash_erase());
     ret = nvs_flash_init();
   }
-  ESP_ERROR_CHECK(ret);
 
   // Initialize the WiFi module
   wifi_init_sta();
+
 
   wifi_init_config_t wifi_init_config = WIFI_INIT_CONFIG_DEFAULT();
   ESP_ERROR_CHECK(esp_wifi_init(&wifi_init_config));

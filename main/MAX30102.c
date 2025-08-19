@@ -29,11 +29,6 @@
 #include "MAX30102.h"
 
 #define MAX_BRIGHTNESS 255
-#define BUF_SIZE 64
-
-extern int client_sock;
-
-void do_retransmit(const int client_sock, const uint32_t *tx_buffer, const uint32_t tx_buffer_len);
 
 
 //
@@ -55,7 +50,7 @@ bool MAX_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_handle_t *dev_
   ESP_ERROR_CHECK(i2c_new_master_bus(&bus_config, bus_handle));
 
   // Ensure the device is connected
-  ESP_ERROR_CHECK(i2c_master_probe(*bus_handle, MAX30102_ADDRESS, -1));
+  i2c_master_probe(*bus_handle, MAX30102_ADDRESS, -1);
 
   // Device setup
   i2c_device_config_t dev_config = {
@@ -686,28 +681,21 @@ void writeRegister8(uint8_t address, uint8_t reg, uint8_t value)
   ESP_ERROR_CHECK(i2c_master_transmit(g_dev_handle, write_buf, sizeof(write_buf), I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS));
 }
 
-void i2c_read_burst_blocking(i2c_master_dev_handle_t _i2cPort_t, uint8_t _i2caddr_t, uint8_t *readByteStream_t, int toGet_t){
+void i2c_read_burst_blocking(i2c_master_dev_handle_t _i2cPort_t, uint8_t _i2caddr_t, uint8_t *readByteStream_t, int toGet_t)
+{
   ESP_ERROR_CHECK(i2c_master_transmit_receive(g_dev_handle, &_i2caddr_t, 1, readByteStream_t, toGet_t, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS));
 }
 
-void transmitData(const uint32_t *data){
-  
-  // static uint32_t data_buffer[BUF_SIZE];
-  // static uint32_t  index = 0;
+void transmitData(const uint32_t *data)
+{
 
-  // data_buffer[index] = data[0];
-  // data_buffer[index+1] = data[1];
-  // index +=2;
+  int tx_str_len;
+  char tx_buf[128];
+  const char* tx_format = "%ld:%ld,%ld\n";
+  uint32_t tx_time = time_us_32();
+  tx_str_len = sprintf(tx_buf, tx_format, tx_time, data[0], data[1]);
 
-  // if(index >= BUF_SIZE){
-  //   do_retransmit(client_sock, data_buffer, index*sizeof(uint32_t));
-  //   index = 0;
-  // }
-  uint32_t tx_data[3];
-  tx_data[0]=time_us_32();
-  tx_data[1]=data[0];
-  tx_data[2]=data[1];
-  do_retransmit(client_sock, tx_data, 3*sizeof(uint32_t));
+  do_retransmit(tx_buf, tx_str_len); 
   
 }
 

@@ -17,7 +17,6 @@
 #ifndef MAX30102_H
 #define MAX30102_H
 
-
 #define I2C_MASTER_SCL_IO           9       /*!< GPIO number used for I2C master clock */
 #define I2C_MASTER_SDA_IO           8       /*!< GPIO number used for I2C master data  */
 #define I2C_MASTER_NUM              I2C_NUM_0                   /*!< I2C port number for master dev */
@@ -29,9 +28,13 @@
 #define MAX30102_ADDRESS 0x57
 #define I2C_BUFFER_LENGTH 6 // 2*3bytes per LED channel (IR+RED)
                             // Depending on the ADC config, 15-18 bits are recorded, which requires 3 bytes per reading
-
+       
 #define delay(delay_ms) busy_wait_ms(delay_ms)
 #define millis() time_us_32()
+
+// Network functions
+void do_retransmit(const char *tx_data, const int tx_data_len);
+
 
 i2c_master_dev_handle_t g_dev_handle;
 void i2c_read_burst_blocking(i2c_master_dev_handle_t _i2cPort_t, uint8_t _i2caddr_t, uint8_t *readByteStream, int toGet);

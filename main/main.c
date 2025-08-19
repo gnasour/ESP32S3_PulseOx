@@ -1,7 +1,9 @@
+// Standard C Libraries
 #include <stdio.h>
 #include <string.h>
 #include <sys/param.h>
 
+// ESP32S3/FreeRTOS Libraries
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -14,23 +16,23 @@
 #include "freertos/event_groups.h"
 #include "esp_system.h"
 
+// Network Libraries
 #include <lwip/netdb.h>
 #include "lwip/err.h"
 #include "lwip/sys.h"
 #include "lwip/sockets.h"
 
-extern bool MAX_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_handle_t *dev_handle);
-extern void setup(uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode, int sampleRate, int pulseWidth, int adcRange);
-extern uint8_t available(void);
-extern uint16_t check(void);
-extern void nextSample(void);
+bool MAX_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_handle_t *dev_handle);
+void setup(uint8_t powerLevel, uint8_t sampleAverage, uint8_t ledMode, int sampleRate, int pulseWidth, int adcRange);
+uint8_t available(void);
+uint16_t check(void);
+void nextSample(void);
 
 
 void wifi_init(void);
 void server_init(void);
 
 const char *TAG_MAIN = "MAIN: ";
-
 
 
 void run()
@@ -63,7 +65,7 @@ void run()
 
 void app_main(void)
 {
-
+  ESP_LOGI(TAG_MAIN, "Initializing WiFi module");
   wifi_init();
   server_init();
   
