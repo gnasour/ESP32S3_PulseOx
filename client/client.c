@@ -1,3 +1,4 @@
+#include <sys/stat.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -35,6 +36,12 @@ int server_init(int pvParameters)
         return -1;
     }
     printf("Socket created\n");
+
+    int optval = 1;
+    if (setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) == -1) {
+        perror("setsockopt SO_REUSEADDR");
+        // Handle error
+    }
 
     int err = bind(listen_sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
     if (err)

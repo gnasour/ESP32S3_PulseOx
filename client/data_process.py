@@ -30,7 +30,7 @@ if '-pts' in sys.argv:
     if sys.argv[sys.argv.index('-pts')+1].isdigit():
         pts = int(sys.argv[sys.argv.index('pts')+1])
 if pts == None:
-    pts = 1800
+    pts = 600
 smoothing_size = 20
 
 # Graphing options

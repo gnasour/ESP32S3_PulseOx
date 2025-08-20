@@ -5,3 +5,4 @@ client/client
 .vscode/c_cpp_properties.json
 .vscode/settings.json
 client/temp
+client/gradient_plot.png
