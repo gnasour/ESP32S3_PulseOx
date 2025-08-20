@@ -73,9 +73,16 @@ int main(int argc, char *argv[])
     struct  addrinfo *result, *rp;
     int     recv_sock = server_init(AF_INET);
 
+    // Make FIFO to sync with data processing task
+    int res = mkfifo("temp", S_IRUSR|S_IWUSR);
+    if(res == -1 && errno != EEXIST)
+    {
+        return -2;
+    }
+
     int num_read;
     char rx_buf[RX_BUF_LEN];
-    int temp_file = open("temp", O_CREAT|O_TRUNC|O_WRONLY, S_IRUSR|S_IWUSR);
+    int temp_file = open("temp", O_TRUNC|O_WRONLY);
     memset(rx_buf, 0, RX_BUF_LEN);
     printf("Reading from socket now\n");
     while(1)

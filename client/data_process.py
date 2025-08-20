@@ -13,9 +13,6 @@ data_file = "temp"
 #Plot package
 plt.style.use('ggplot')
 
-#File constants
-fr = open(data_file, "r")
-
 #User option to graph
 graph_flag = None
 if "-g" in sys.argv:
@@ -36,6 +33,7 @@ if pts == None:
     pts = 1800
 smoothing_size = 20
 
+# Graphing options
 if graph_flag:
     plt.ion()
     fig = plt.figure(figsize=(6,6))
@@ -48,6 +46,8 @@ if graph_flag:
     ax1.tick_params(axis='both',which='major',labelsize=16)
     plt.show()
 
+#File constants
+fr = open(data_file, "r")
 
 while True:
     t_vec, ir_vec, red_vec, y_vals=[],[],[],[]
@@ -61,6 +61,7 @@ while True:
                     y_vals.append(float(curr_data[2]))
                 except:
                     continue
+
         t1 = time.time()
         samp_rate = 1/np.mean(np.diff(t_vec))
         min_time_bw_samps = (60.0/heart_rate_span[1])
